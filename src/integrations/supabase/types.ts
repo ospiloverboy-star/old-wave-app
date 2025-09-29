@@ -14,7 +14,138 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      jersey_requests: {
+        Row: {
+          additional_notes: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          jersey_name: string
+          league: string | null
+          phone_number: string
+          size: string
+          status: string | null
+          team: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          jersey_name: string
+          league?: string | null
+          phone_number: string
+          size: string
+          status?: string | null
+          team: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          jersey_name?: string
+          league?: string | null
+          phone_number?: string
+          size?: string
+          status?: string | null
+          team?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      jerseys: {
+        Row: {
+          available_sizes: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_available: boolean | null
+          is_featured: boolean | null
+          league: string
+          name: string
+          price: number
+          season: string
+          sizes: string[] | null
+          stock_quantity: number | null
+          team: string
+          updated_at: string
+        }
+        Insert: {
+          available_sizes?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          is_featured?: boolean | null
+          league: string
+          name: string
+          price: number
+          season: string
+          sizes?: string[] | null
+          stock_quantity?: number | null
+          team: string
+          updated_at?: string
+        }
+        Update: {
+          available_sizes?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          is_featured?: boolean | null
+          league?: string
+          name?: string
+          price?: number
+          season?: string
+          sizes?: string[] | null
+          stock_quantity?: number | null
+          team?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          is_admin: boolean | null
+          phone_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean | null
+          phone_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean | null
+          phone_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
