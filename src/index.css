@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 /* Old Wave Jersey Design System - Sports-focused theme with royal blue primary */
 
 @layer base {
@@ -142,11 +145,14 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
   }
 
   /* Sports typography */
   .text-jersey-title {
-    @apply text-2xl font-bold tracking-tight;
+    @apply text-xl font-heading font-semibold tracking-tight;
   }
   
   .text-team-name {

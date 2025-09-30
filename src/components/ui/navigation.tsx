@@ -3,7 +3,7 @@ import { Button } from "./button";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/old-wave-logo.png";
+import Logo from "./logo";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,13 +22,11 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-sm">OW</span>
-              </div>
-              <span className="font-bold text-lg">Old Wave Jersey</span>
-            </div>
+          <Link to="/" className="flex items-center space-x-3 group">
+            <Logo size="md" className="transition-transform duration-300 group-hover:scale-105" />
+            <span className="font-heading font-semibold text-lg tracking-tight hidden sm:block">
+              Old Wave Jersey
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
