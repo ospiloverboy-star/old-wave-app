@@ -7,8 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/ui/navigation";
-import { Shield, ShirtIcon, MessageSquare, Plus } from "lucide-react";
+import { Shield, ShirtIcon, MessageSquare, Plus, Pencil, Trash2, Package } from "lucide-react";
 import type { User, Session } from '@supabase/supabase-js';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import JerseyForm from "@/components/admin/JerseyForm";
 
 interface Profile {
   id: string;
@@ -49,6 +52,10 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [jerseys, setJerseys] = useState<Jersey[]>([]);
   const [requests, setRequests] = useState<JerseyRequest[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [showJerseyDialog, setShowJerseyDialog] = useState(false);
+  const [editingJersey, setEditingJersey] = useState<Jersey | null>(null);
+  const [deletingJersey, setDeletingJersey] = useState<Jersey | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -82,6 +89,7 @@ const Admin = () => {
     if (profile?.is_admin) {
       fetchJerseys();
       fetchRequests();
+      fetchOrders();
     }
   }, [profile]);
 
@@ -158,6 +166,67 @@ const Admin = () => {
       setRequests(data || []);
     } catch (error) {
       console.error('Error:', error);
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          profiles!inner(full_name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching orders:', error);
+        return;
+      }
+
+      setOrders(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleJerseyFormSuccess = () => {
+    setShowJerseyDialog(false);
+    setEditingJersey(null);
+    fetchJerseys();
+  };
+
+  const handleEditJersey = (jersey: Jersey) => {
+    setEditingJersey(jersey);
+    setShowJerseyDialog(true);
+  };
+
+  const handleDeleteJersey = async () => {
+    if (!deletingJersey) return;
+
+    try {
+      const { error } = await supabase
+        .from('jerseys')
+        .delete()
+        .eq('id', deletingJersey.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Jersey Deleted",
+        description: "Jersey has been successfully deleted.",
+      });
+
+      fetchJerseys();
+    } catch (error) {
+      console.error('Error deleting jersey:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete jersey.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingJersey(null);
     }
   };
 
@@ -270,7 +339,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="jerseys" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="jerseys" className="flex items-center gap-2">
               <ShirtIcon className="h-4 w-4" />
               Jerseys ({jerseys.length})
@@ -279,13 +348,17 @@ const Admin = () => {
               <MessageSquare className="h-4 w-4" />
               Requests ({requests.length})
             </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Orders ({orders.length})
+            </TabsTrigger>
           </TabsList>
 
           {/* Jerseys Tab */}
           <TabsContent value="jerseys" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">Jersey Management</h2>
-              <Button>
+              <Button onClick={() => { setEditingJersey(null); setShowJerseyDialog(true); }}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Jersey
               </Button>
@@ -299,7 +372,7 @@ const Admin = () => {
                   <p className="text-muted-foreground mb-6">
                     Start by adding your first jersey to the inventory.
                   </p>
-                  <Button>
+                  <Button onClick={() => { setEditingJersey(null); setShowJerseyDialog(true); }}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add First Jersey
                   </Button>
@@ -330,10 +403,12 @@ const Admin = () => {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => handleEditJersey(jersey)}>
+                            <Pencil className="h-3 w-3 mr-1" />
                             Edit
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => setDeletingJersey(jersey)}>
+                            <Trash2 className="h-3 w-3 mr-1" />
                             Delete
                           </Button>
                         </div>
@@ -422,8 +497,89 @@ const Admin = () => {
               </div>
             )}
           </TabsContent>
+
+          {/* Orders Tab */}
+          <TabsContent value="orders" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Order Management</h2>
+
+            {orders.length === 0 ? (
+              <Card>
+                <CardContent className="text-center py-16">
+                  <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No orders yet</h3>
+                  <p className="text-muted-foreground">
+                    Customer orders will appear here.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-4">
+                {orders.map((order) => (
+                  <Card key={order.id}>
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">Order #{order.order_number}</CardTitle>
+                          <CardDescription>
+                            Customer: {order.profiles?.full_name || 'Unknown'}
+                          </CardDescription>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant={getStatusBadgeVariant(order.status)}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </Badge>
+                          <Badge variant={order.payment_status === 'paid' ? 'default' : 'secondary'}>
+                            {order.payment_status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <p className="font-semibold">Total: ${order.total_amount.toFixed(2)}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Ordered: {new Date(order.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={showJerseyDialog} onOpenChange={setShowJerseyDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingJersey ? 'Edit Jersey' : 'Add New Jersey'}</DialogTitle>
+            <DialogDescription>
+              {editingJersey ? 'Update jersey details' : 'Add a new jersey to your inventory'}
+            </DialogDescription>
+          </DialogHeader>
+          <JerseyForm
+            onSuccess={handleJerseyFormSuccess}
+            onCancel={() => { setShowJerseyDialog(false); setEditingJersey(null); }}
+            editingJersey={editingJersey}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deletingJersey} onOpenChange={() => setDeletingJersey(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the jersey "{deletingJersey?.name}". This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteJersey}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
