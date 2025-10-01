@@ -1,8 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 interface JerseyCardProps {
   id: string;
@@ -17,68 +15,67 @@ interface JerseyCardProps {
 }
 
 const JerseyCard = ({ 
+  id, 
   name, 
   team, 
+  league, 
+  season, 
   price, 
   image_url, 
-  is_available,
+  is_available, 
+  is_featured = false 
 }: JerseyCardProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  const handleWhatsAppClick = () => {
-    window.open("https://wa.me/your-number", "_blank");
-  };
-
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow bg-card">
-      <div className="relative overflow-hidden bg-muted/10">
-        {!imageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-muted/30 animate-pulse">
-            <div className="text-muted-foreground text-sm">Loading...</div>
+    <Link to={`/jersey/${id}`} className="block group">
+      <Card className="jersey-card group-hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
+        <CardContent className="p-0">
+          <div className="relative overflow-hidden rounded-t-lg">
+            <img
+              src={image_url || "/placeholder.svg"}
+              alt={`${team} ${season} ${name}`}
+              className="jersey-image w-full transition-transform duration-300 group-hover:scale-105"
+            />
+            {is_featured && (
+              <Badge className="absolute top-3 left-3 bg-gradient-to-r from-accent to-accent/80 text-white shadow-lg animate-pulse">
+                ⭐ Featured
+              </Badge>
+            )}
+            <div className="absolute top-3 right-3">
+              {is_available ? (
+                <div className="status-available backdrop-blur-sm">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></div>
+                  Available
+                </div>
+              ) : (
+                <div className="status-out-of-stock backdrop-blur-sm">
+                  <div className="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                  Out of Stock
+                </div>
+              )}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-        )}
-        <img
-          src={image_url || '/placeholder.svg'}
-          alt={`${name} - ${team}`}
-          className={`w-full aspect-[3/4] object-cover transition-all duration-500 group-hover:scale-105 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          onLoad={() => setImageLoaded(true)}
-          onError={(e) => {
-            e.currentTarget.src = '/placeholder.svg';
-            setImageLoaded(true);
-          }}
-        />
+        </CardContent>
         
-        {!is_available && (
-          <Badge 
-            variant="destructive"
-            className="absolute top-3 right-3 font-medium shadow-lg backdrop-blur-sm bg-muted text-card-foreground text-xs px-2 py-1"
-          >
-            Out of Stock
-          </Badge>
-        )}
-      </div>
-
-      <CardContent className="p-4 space-y-3">
-        <h3 className="font-heading font-semibold text-base text-card-foreground line-clamp-1">{team}</h3>
-        <p className="text-xl font-bold text-card-foreground">${price.toFixed(2)}</p>
-        
-        <Button 
-          onClick={handleWhatsAppClick}
-          className={`w-full ${
-            is_available 
-              ? "bg-secondary hover:bg-secondary/90 text-secondary-foreground" 
-              : "bg-muted text-muted-foreground cursor-not-allowed"
-          }`}
-          size="sm"
-          disabled={!is_available}
-        >
-          <MessageCircle className="mr-2 h-4 w-4" />
-          {is_available ? "Chat on Whatsapp" : "Glutton Whatsaps"}
-        </Button>
-      </CardContent>
-    </Card>
+        <CardFooter className="p-5">
+          <div className="w-full space-y-2">
+            <div className="text-team-name font-medium">{team}</div>
+            <h3 className="text-jersey-title font-heading font-semibold group-hover:text-primary transition-colors duration-200 line-clamp-2">
+              {name}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {league} • {season}
+            </p>
+            <div className="flex items-center justify-between pt-2">
+              <div className="text-price font-heading font-bold">${price.toFixed(2)}</div>
+              <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                View Details →
+              </div>
+            </div>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 
