@@ -1,69 +1,97 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+/* Import Google Fonts - Enhanced for light and airy aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Old Wave Jersey Design System - Sports-focused theme with royal blue primary */
+/* Old Wave Jersey Design System - Premium Light & Airy Aesthetic */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 9%;
+    /* Light & Airy Foundation - Soft neutrals with breathing room */
+    --background: 0 0% 99%;
+    --foreground: 215 16% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 9%;
+    --card-foreground: 215 16% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 9%;
+    --popover-foreground: 215 16% 25%;
 
-    /* Royal Blue Primary - Sports Energy */
-    --primary: 221 83% 53%;
+    /* Soft Blue Primary - Calming and sophisticated */
+    --primary: 210 45% 62%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 221 83% 33%;
-    
-    /* Emerald Green Secondary - Available/Success */
-    --secondary: 158 64% 52%;
+    --primary-dark: 210 50% 48%;
+    --primary-light: 210 40% 85%;
+
+    /* Gentle Sage Secondary - Natural elegance */
+    --secondary: 145 25% 65%;
     --secondary-foreground: 0 0% 100%;
-    
-    /* Gold Accent - Featured/Premium */
-    --accent: 45 93% 58%;
-    --accent-foreground: 220 13% 9%;
-    
-    /* Status Colors */
-    --success: 142 76% 36%;
+    --secondary-light: 145 20% 92%;
+
+    /* Warm Peach Accent - Subtle energy */
+    --accent: 25 75% 82%;
+    --accent-foreground: 215 16% 25%;
+    --accent-dark: 25 70% 68%;
+
+    /* Status Colors - Soft and approachable */
+    --success: 145 45% 58%;
     --success-foreground: 0 0% 100%;
-    
-    --warning: 25 95% 53%;
-    --warning-foreground: 0 0% 100%;
-    
-    --destructive: 0 84% 60%;
+    --success-light: 145 40% 92%;
+
+    --warning: 38 85% 72%;
+    --warning-foreground: 215 16% 25%;
+
+    --destructive: 355 70% 72%;
     --destructive-foreground: 0 0% 100%;
+    --destructive-light: 355 60% 95%;
 
-    /* Neutral Grays */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Sophisticated Neutrals - Multiple layers */
+    --muted: 210 15% 97%;
+    --muted-foreground: 215 10% 55%;
+    --muted-darker: 210 12% 92%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 221 83% 53%;
+    --border: 210 15% 92%;
+    --input: 210 15% 94%;
+    --ring: 210 45% 62%;
 
-    /* Sports Theme Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
-    --gradient-card: linear-gradient(180deg, hsl(var(--card)), hsl(220 14% 98%));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(38 92% 50%));
-    
-    /* Sports Shadows */
-    --shadow-jersey: 0 10px 25px -5px hsl(var(--primary) / 0.1);
-    --shadow-card: 0 4px 6px -1px hsl(220 13% 9% / 0.1);
-    --shadow-featured: 0 20px 40px -12px hsl(var(--accent) / 0.25);
-    
-    /* Animations */
+    /* Premium Gradients - Soft and ethereal */
+    --gradient-hero: linear-gradient(135deg, hsl(210 45% 62%) 0%, hsl(195 40% 68%) 50%, hsl(180 35% 75%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    --gradient-accent: linear-gradient(135deg, hsl(25 75% 82%), hsl(35 70% 85%));
+    --gradient-mesh: radial-gradient(at 80% 20%, hsl(210 45% 62% / 0.12) 0%, transparent 50%),
+                     radial-gradient(at 20% 80%, hsl(145 25% 65% / 0.08) 0%, transparent 50%),
+                     radial-gradient(at 50% 50%, hsl(25 75% 82% / 0.06) 0%, transparent 50%);
+
+    /* Layered Soft Shadows - Depth without heaviness */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    --shadow-sm: 0 2px 4px -1px rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+    --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.03);
+    --shadow-lg: 0 8px 16px -4px rgb(0 0 0 / 0.06), 0 4px 8px -4px rgb(0 0 0 / 0.04);
+    --shadow-xl: 0 16px 32px -8px rgb(0 0 0 / 0.08), 0 8px 16px -8px rgb(0 0 0 / 0.05);
+    --shadow-2xl: 0 24px 48px -12px rgb(0 0 0 / 0.10), 0 12px 24px -12px rgb(0 0 0 / 0.06);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.03);
+
+    /* Elevated shadows for interactive elements */
+    --shadow-card: var(--shadow-sm);
+    --shadow-card-hover: var(--shadow-lg);
+    --shadow-jersey: var(--shadow-md);
+    --shadow-jersey-hover: var(--shadow-xl);
+    --shadow-featured: var(--shadow-2xl);
+
+    /* Sophisticated Animation Curves */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.25, 0.265, 1.25);
+    --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-elegant: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-    --radius: 0.75rem;
+    /* Border radius scale */
+    --radius-sm: 0.5rem;
+    --radius: 0.875rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.75rem;
+    --radius-2xl: 2.5rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -145,48 +173,209 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
-    line-height: 1.6;
-    letter-spacing: -0.01em;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7;
+    letter-spacing: -0.011em;
   }
 
-  /* Sports typography */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced Typography Scale */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
   .text-jersey-title {
     @apply text-xl font-heading font-semibold tracking-tight;
   }
-  
+
   .text-team-name {
-    @apply text-lg font-semibold text-primary;
+    @apply text-base font-medium text-primary/90;
   }
-  
+
   .text-price {
-    @apply text-xl font-bold text-foreground;
+    @apply text-2xl font-semibold text-foreground;
+  }
+
+  /* Smooth transitions for theme changes */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 }
 
 @layer components {
-  /* Jersey status indicators */
+  /* Premium Status Indicators */
   .status-available {
-    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium bg-success/10 text-success border border-success/20 rounded-full;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
+           bg-success-light/50 text-success backdrop-blur-sm
+           border border-success/20 rounded-full
+           shadow-[var(--shadow-xs)];
   }
-  
+
   .status-out-of-stock {
-    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium bg-destructive/10 text-destructive border border-destructive/20 rounded-full;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
+           bg-destructive-light/40 text-destructive backdrop-blur-sm
+           border border-destructive/20 rounded-full
+           shadow-[var(--shadow-xs)];
   }
-  
+
+  /* Elevated Jersey Card with sophisticated hover */
   .jersey-card {
-    @apply bg-card border border-border rounded-xl overflow-hidden shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-jersey)] transition-[var(--transition-smooth)] hover:scale-[1.02];
+    @apply bg-card border border-border/60 rounded-[var(--radius-lg)]
+           overflow-hidden shadow-[var(--shadow-card)]
+           transition-all duration-500 ease-out
+           hover:shadow-[var(--shadow-jersey-hover)]
+           hover:-translate-y-2
+           hover:border-primary/20;
   }
-  
+
   .jersey-image {
-    @apply aspect-[4/5] object-cover;
+    @apply aspect-[4/5] object-cover transition-transform duration-700 ease-out;
   }
-  
+
+  .jersey-card:hover .jersey-image {
+    @apply scale-105;
+  }
+
+  /* Premium Gradients */
   .gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
   .gradient-card {
     background: var(--gradient-card);
+  }
+
+  .gradient-mesh {
+    background: var(--gradient-mesh);
+  }
+
+  /* Frosted Glass Effect */
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/70 border border-white/30;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl bg-card/80 border border-border/50;
+  }
+
+  /* Elegant Buttons */
+  .btn-primary-elegant {
+    @apply bg-gradient-to-r from-primary to-primary-dark text-primary-foreground
+           shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-lg)]
+           transition-all duration-300 ease-out
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-ghost-elegant {
+    @apply border-2 border-primary/30 text-primary bg-primary/5
+           backdrop-blur-sm hover:bg-primary/10 hover:border-primary/50
+           transition-all duration-300 ease-out;
+  }
+
+  /* Smooth Fade In Animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Stagger animation delay utilities */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+
+  /* Focus visible styling */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
   }
 }
