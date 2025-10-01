@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/ui/navigation";
 import Footer from "@/components/ui/footer";
-import { User, Package, Loader2, Mail, Phone, Calendar } from "lucide-react";
+import { User, Package, Loader as Loader2, Mail, Phone, Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 interface Profile {

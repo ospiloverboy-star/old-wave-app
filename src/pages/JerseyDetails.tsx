@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/ui/navigation";
 import Footer from "@/components/ui/footer";
-import { ShoppingCart, ArrowLeft, Loader2, Check } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Loader as Loader2, Check } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Jersey {

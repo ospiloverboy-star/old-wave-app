@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/ui/navigation";
-import { Shield, ShirtIcon, MessageSquare, Plus, Pencil, Trash2, Package } from "lucide-react";
+import { Shield, Shirt as ShirtIcon, MessageSquare, Plus, Pencil, Trash2, Package } from "lucide-react";
 import type { User, Session } from '@supabase/supabase-js';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
