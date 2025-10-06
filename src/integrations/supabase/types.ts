@@ -14,14 +14,88 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          auto_response_enabled: boolean | null
+          business_hours: Json
+          created_at: string | null
+          id: string
+          message_templates: Json
+          notification_email: string | null
+          notification_preferences: Json | null
+          updated_at: string | null
+          whatsapp_business_number: string
+        }
+        Insert: {
+          auto_response_enabled?: boolean | null
+          business_hours?: Json
+          created_at?: string | null
+          id?: string
+          message_templates?: Json
+          notification_email?: string | null
+          notification_preferences?: Json | null
+          updated_at?: string | null
+          whatsapp_business_number: string
+        }
+        Update: {
+          auto_response_enabled?: boolean | null
+          business_hours?: Json
+          created_at?: string | null
+          id?: string
+          message_templates?: Json
+          notification_email?: string | null
+          notification_preferences?: Json | null
+          updated_at?: string | null
+          whatsapp_business_number?: string
+        }
+        Relationships: []
+      }
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          jersey_id: string
+          quantity: number
+          size: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jersey_id: string
+          quantity?: number
+          size: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jersey_id?: string
+          quantity?: number
+          size?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_jersey_id_fkey"
+            columns: ["jersey_id"]
+            isOneToOne: false
+            referencedRelation: "jerseys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jersey_requests: {
         Row: {
           additional_notes: string | null
+          admin_response: string | null
           created_at: string
           email: string
           full_name: string
           id: string
+          inquiry_id: string | null
           jersey_name: string
+          last_contacted_at: string | null
           league: string | null
           phone_number: string
           size: string
@@ -29,14 +103,18 @@ export type Database = {
           team: string
           updated_at: string
           user_id: string | null
+          whatsapp_contacted: boolean | null
         }
         Insert: {
           additional_notes?: string | null
+          admin_response?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
+          inquiry_id?: string | null
           jersey_name: string
+          last_contacted_at?: string | null
           league?: string | null
           phone_number: string
           size: string
@@ -44,14 +122,18 @@ export type Database = {
           team: string
           updated_at?: string
           user_id?: string | null
+          whatsapp_contacted?: boolean | null
         }
         Update: {
           additional_notes?: string | null
+          admin_response?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
+          inquiry_id?: string | null
           jersey_name?: string
+          last_contacted_at?: string | null
           league?: string | null
           phone_number?: string
           size?: string
@@ -59,8 +141,17 @@ export type Database = {
           team?: string
           updated_at?: string
           user_id?: string | null
+          whatsapp_contacted?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "jersey_requests_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       jerseys: {
         Row: {
@@ -73,7 +164,7 @@ export type Database = {
           is_featured: boolean | null
           league: string
           name: string
-          price: number
+          price_naira: number
           season: string
           sizes: string[] | null
           stock_quantity: number | null
@@ -90,7 +181,7 @@ export type Database = {
           is_featured?: boolean | null
           league: string
           name: string
-          price: number
+          price_naira?: number
           season: string
           sizes?: string[] | null
           stock_quantity?: number | null
@@ -107,7 +198,7 @@ export type Database = {
           is_featured?: boolean | null
           league?: string
           name?: string
-          price?: number
+          price_naira?: number
           season?: string
           sizes?: string[] | null
           stock_quantity?: number | null
@@ -116,45 +207,254 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          jersey_id: string
+          order_id: string
+          price: number
+          quantity: number
+          size: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          jersey_id: string
+          order_id: string
+          price: number
+          quantity?: number
+          size: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          jersey_id?: string
+          order_id?: string
+          price?: number
+          quantity?: number
+          size?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_jersey_id_fkey"
+            columns: ["jersey_id"]
+            isOneToOne: false
+            referencedRelation: "jerseys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_city: string
+          delivery_state: string
+          id: string
+          inquiry_number: string | null
+          inquiry_type: string | null
+          items: Json
+          notes: string | null
+          order_number: string
+          priority_level: string | null
+          quoted_price: number | null
+          response_time: string | null
+          status: string | null
+          total_amount: number
+          updated_at: string
+          user_id: string | null
+          whatsapp_sent_at: string | null
+          whatsapp_status: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_city: string
+          delivery_state: string
+          id?: string
+          inquiry_number?: string | null
+          inquiry_type?: string | null
+          items: Json
+          notes?: string | null
+          order_number: string
+          priority_level?: string | null
+          quoted_price?: number | null
+          response_time?: string | null
+          status?: string | null
+          total_amount: number
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_sent_at?: string | null
+          whatsapp_status?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_address?: string
+          delivery_city?: string
+          delivery_state?: string
+          id?: string
+          inquiry_number?: string | null
+          inquiry_type?: string | null
+          items?: Json
+          notes?: string | null
+          order_number?: string
+          priority_level?: string | null
+          quoted_price?: number | null
+          response_time?: string | null
+          status?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string | null
+          whatsapp_sent_at?: string | null
+          whatsapp_status?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          avatar_url: string | null
+          city: string | null
           created_at: string
+          delivery_address: string | null
           full_name: string | null
           id: string
           is_admin: boolean | null
           phone_number: string | null
+          state: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          delivery_address?: string | null
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
           phone_number?: string | null
+          state?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          delivery_address?: string | null
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
           phone_number?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          id: string
+          jersey_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jersey_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jersey_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_jersey_id_fkey"
+            columns: ["jersey_id"]
+            isOneToOne: false
+            referencedRelation: "jerseys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -281,6 +581,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

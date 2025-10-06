@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/ui/navigation";
 import Footer from "@/components/ui/footer";
-import { ShoppingCart, ArrowLeft, Check, Package, Shield, Award, Heart, Share2 } from "lucide-react";
+import { MessageCircle, ArrowLeft, Check, Package, Shield, Award, Heart, Share2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Jersey {
@@ -16,7 +16,7 @@ interface Jersey {
   team: string;
   league: string;
   season: string;
-  price: number;
+  price_naira: number;
   description: string | null;
   image_url: string;
   sizes: string[];
@@ -30,6 +30,7 @@ const JerseyDetails = () => {
   const [jersey, setJersey] = useState<Jersey | null>(null);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
+  const [contacting, setContacting] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [user, setUser] = useState<any>(null);
@@ -77,66 +78,81 @@ const JerseyDetails = () => {
     }
   };
 
-  const handleAddToCart = async () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
+  const handleWhatsAppInquiry = async () => {
     if (!selectedSize) {
       toast({
-        title: "Size Required",
-        description: "Please select a size before adding to cart.",
+        title: "Please select a size",
+        description: "Select a size before contacting us",
         variant: "destructive",
       });
       return;
     }
 
-    setAdding(true);
+    setContacting(true);
+
     try {
-      const { data: existing, error: checkError } = await supabase
-        .from('cart_items')
-        .select('id, quantity')
-        .eq('user_id', user.id)
-        .eq('jersey_id', jersey!.id)
-        .eq('size', selectedSize)
-        .maybeSingle();
+      // Import WhatsApp utilities
+      const { generateWhatsAppLink, generateJerseyInquiryMessage, isMobileDevice } = await import('@/lib/whatsapp');
+      
+      // Fetch business number
+      const { data: settings } = await supabase
+        .from('admin_settings')
+        .select('whatsapp_business_number')
+        .single();
 
-      if (checkError && checkError.code !== 'PGRST116') throw checkError;
+      const businessNumber = settings?.whatsapp_business_number || '2348012345678';
 
-      if (existing) {
-        const { error } = await supabase
-          .from('cart_items')
-          .update({ quantity: existing.quantity + quantity })
-          .eq('id', existing.id);
+      // Generate inquiry message
+      const message = generateJerseyInquiryMessage(
+        jersey.name,
+        jersey.team,
+        selectedSize,
+        quantity,
+        user?.email
+      );
 
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('cart_items')
-          .insert({
-            user_id: user.id,
-            jersey_id: jersey!.id,
+      // Log inquiry to database if user is logged in
+      if (user) {
+        await supabase.from('orders').insert({
+          inquiry_type: 'jersey_inquiry',
+          customer_name: user.email || '',
+          customer_phone: '',
+          customer_email: user.email || '',
+          delivery_address: '',
+          delivery_state: '',
+          delivery_city: '',
+          items: [{
+            jersey_id: jersey.id,
+            name: jersey.name,
+            team: jersey.team,
+            size: selectedSize,
             quantity: quantity,
-            size: selectedSize
-          });
-
-        if (error) throw error;
+            price: jersey.price_naira
+          }],
+          total_amount: jersey.price_naira * quantity,
+          status: 'pending',
+          whatsapp_status: 'contacted',
+          whatsapp_sent_at: new Date().toISOString(),
+        });
       }
 
+      // Open WhatsApp
+      const link = generateWhatsAppLink(businessNumber, message, isMobileDevice());
+      window.open(link, '_blank');
+
       toast({
-        title: "Added to Cart",
-        description: `${jersey!.name} has been added to your cart.`,
+        title: "Opening WhatsApp",
+        description: "We'll respond to your inquiry shortly!",
       });
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error:', error);
       toast({
         title: "Error",
-        description: "Failed to add item to cart.",
+        description: "Failed to open WhatsApp. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setAdding(false);
+      setContacting(false);
     }
   };
 
@@ -272,22 +288,28 @@ const JerseyDetails = () => {
                 </div>
 
                 <Button
-                  className="w-full h-14 text-base btn-primary-elegant rounded-[var(--radius-lg)] group"
-                  onClick={handleAddToCart}
-                  disabled={!jersey.is_available || adding || !selectedSize}
+                  className="w-full h-14 text-base bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-[var(--radius-lg)] group"
+                  onClick={handleWhatsAppInquiry}
+                  disabled={!jersey.is_available || contacting || !selectedSize}
                 >
-                  {adding ? (
+                  {contacting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Adding to Cart...
-                    </>
+                      Opening WhatsApp...
+                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-                      Add to Cart
+                      <MessageCircle className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                      Contact Seller on WhatsApp
                     </>
                   )}
                 </Button>
+                
+                {quantity >= 5 && (
+                  <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-sm text-amber-800 dark:text-amber-200">
+                    💡 <strong>Bulk Order Discount Available!</strong> Contact us for special pricing.
+                  </div>
+                )}
 
                 {!jersey.is_available && (
                   <p className="text-sm text-destructive text-center font-medium">

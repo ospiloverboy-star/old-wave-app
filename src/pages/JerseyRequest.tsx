@@ -37,77 +37,82 @@ const JerseyRequest = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, contactViaWhatsApp = false) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       const validatedData = requestSchema.parse(formData);
 
-      const { data: { user } } = await supabase.auth.getUser();
-
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('jersey_requests')
-        .insert({
-          user_id: user?.id || null,
-          full_name: validatedData.fullName,
-          email: validatedData.email,
-          phone_number: validatedData.phoneNumber,
-          jersey_name: validatedData.jerseyName,
-          team: validatedData.team,
-          league: validatedData.league || null,
-          size: validatedData.size,
-          additional_notes: validatedData.additionalNotes || null,
-          status: 'pending'
-        });
+        .insert([
+          {
+            team: validatedData.team,
+            league: validatedData.league,
+            jersey_name: validatedData.jerseyName,
+            size: validatedData.size,
+            full_name: validatedData.fullName,
+            email: validatedData.email,
+            phone_number: validatedData.phoneNumber,
+            additional_notes: validatedData.additionalNotes,
+            whatsapp_contacted: contactViaWhatsApp,
+            last_contacted_at: contactViaWhatsApp ? new Date().toISOString() : null,
+          },
+        ])
+        .select();
 
-      if (error) {
-        console.error('Error submitting request:', error);
-        toast({
-          title: "Request Failed",
-          description: "There was an error submitting your request. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
+      if (error) throw error;
 
       toast({
         title: "Request Submitted!",
-        description: "We'll review your request and get back to you soon.",
+        description: contactViaWhatsApp 
+          ? "Opening WhatsApp to complete your request..."
+          : "We'll get back to you soon via email or phone.",
       });
 
-      // Clear form
+      // If WhatsApp option selected, open WhatsApp
+      if (contactViaWhatsApp && data) {
+        const { generateWhatsAppLink, generateCustomRequestMessage, isMobileDevice } = await import('@/lib/whatsapp');
+        const { data: settings } = await supabase
+          .from('admin_settings')
+          .select('whatsapp_business_number')
+          .single();
+
+        const businessNumber = settings?.whatsapp_business_number || '2348012345678';
+        const message = generateCustomRequestMessage(
+          validatedData.team,
+          validatedData.league || '',
+          validatedData.jerseyName,
+          validatedData.size,
+          validatedData.fullName
+        );
+
+        const link = generateWhatsAppLink(businessNumber, message, isMobileDevice());
+        window.open(link, '_blank');
+      }
+
       setFormData({
+        team: "",
+        league: "",
+        jerseyName: "",
+        size: "",
         fullName: "",
         email: "",
         phoneNumber: "",
-        jerseyName: "",
-        team: "",
-        league: "",
-        size: "",
-        additionalNotes: ""
+        additionalNotes: "",
       });
 
-      // Redirect to catalog after a short delay
       setTimeout(() => {
-        navigate("/catalog");
+        navigate('/catalog');
       }, 2000);
-
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const firstError = error.errors[0];
-        toast({
-          title: "Validation Error",
-          description: firstError.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred. Please try again.",
-          variant: "destructive",
-        });
-      }
+    } catch (error: any) {
+      console.error('Error submitting request:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit request. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

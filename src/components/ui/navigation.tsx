@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./button";
-import { ShoppingCart, User, Menu, X, LogOut, ShieldCheck } from "lucide-react";
+import { MessageCircle, User, Menu, X, LogOut, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Logo from "./logo";
@@ -28,7 +28,6 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -39,10 +38,8 @@ const Navigation = () => {
         setUser(session?.user ?? null);
         if (session?.user) {
           fetchProfile(session.user.id);
-          fetchCartCount(session.user.id);
         } else {
           setProfile(null);
-          setCartCount(0);
         }
       }
     );
@@ -51,7 +48,6 @@ const Navigation = () => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
-        fetchCartCount(session.user.id);
       }
     });
 
@@ -70,16 +66,17 @@ const Navigation = () => {
     }
   };
 
-  const fetchCartCount = async (userId: string) => {
-    const { data } = await supabase
-      .from('cart_items')
-      .select('quantity')
-      .eq('user_id', userId);
+  const handleWhatsAppContact = async () => {
+    const { data: settings } = await supabase
+      .from('admin_settings')
+      .select('whatsapp_business_number')
+      .single();
 
-    if (data) {
-      const total = data.reduce((sum, item) => sum + item.quantity, 0);
-      setCartCount(total);
-    }
+    const businessNumber = settings?.whatsapp_business_number || '2348012345678';
+    const { generateWhatsAppLink, isMobileDevice } = await import('@/lib/whatsapp');
+    const message = "Hi! I'd like to inquire about your jerseys.";
+    const link = generateWhatsAppLink(businessNumber, message, isMobileDevice());
+    window.open(link, '_blank');
   };
 
   const handleSignOut = async () => {
@@ -147,16 +144,15 @@ const Navigation = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/cart" className="relative">
-              <Button variant="ghost" size="sm">
-                <ShoppingCart className="h-4 w-4" />
-                {cartCount > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-                    {cartCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+            <Button 
+              onClick={handleWhatsAppContact}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Contact Us
+            </Button>
 
             {user ? (
               <DropdownMenu>
@@ -234,12 +230,6 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-2 border-t">
-                <Link to="/cart">
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Cart {cartCount > 0 && `(${cartCount})`}
-                  </Button>
-                </Link>
                 {user ? (
                   <>
                     <Link to="/profile">
