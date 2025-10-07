@@ -17,7 +17,7 @@ interface Jersey {
   team: string;
   league: string;
   season: string;
-  price: number;
+  price_naira: number;
   image_url: string;
   is_available: boolean;
   is_featured: boolean;

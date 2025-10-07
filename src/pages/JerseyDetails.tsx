@@ -113,14 +113,16 @@ const JerseyDetails = () => {
 
       // Log inquiry to database if user is logged in
       if (user) {
+        const orderNumber = `INQ-${Date.now()}`;
         await supabase.from('orders').insert({
-          inquiry_type: 'jersey_inquiry',
+          order_number: orderNumber,
           customer_name: user.email || '',
           customer_phone: '',
           customer_email: user.email || '',
           delivery_address: '',
           delivery_state: '',
           delivery_city: '',
+          total_amount: jersey.price_naira * quantity,
           items: [{
             jersey_id: jersey.id,
             name: jersey.name,
@@ -129,7 +131,6 @@ const JerseyDetails = () => {
             quantity: quantity,
             price: jersey.price_naira
           }],
-          total_amount: jersey.price_naira * quantity,
           status: 'pending',
           whatsapp_status: 'contacted',
           whatsapp_sent_at: new Date().toISOString(),
@@ -231,7 +232,7 @@ const JerseyDetails = () => {
             </div>
 
             <div className="flex items-baseline gap-4">
-              <p className="font-heading text-5xl font-bold">${jersey.price.toFixed(2)}</p>
+              <p className="font-heading text-5xl font-bold">₦{jersey.price_naira.toLocaleString()}</p>
             </div>
 
             {jersey.description && (

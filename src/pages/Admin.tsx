@@ -26,7 +26,7 @@ interface Jersey {
   team: string;
   league: string;
   season: string;
-  price: number;
+  price_naira: number;
   is_available: boolean;
   is_featured: boolean;
   stock_quantity: number;
@@ -397,7 +397,7 @@ const Admin = () => {
                           <p className="text-muted-foreground mb-1">
                             {jersey.team} • {jersey.league} • {jersey.season}
                           </p>
-                          <p className="font-semibold">${jersey.price.toFixed(2)}</p>
+                          <p className="font-semibold">₦{jersey.price_naira.toLocaleString()}</p>
                           <p className="text-sm text-muted-foreground">
                             Stock: {jersey.stock_quantity} units
                           </p>

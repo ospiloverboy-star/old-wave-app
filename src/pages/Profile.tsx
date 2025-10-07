@@ -24,19 +24,8 @@ interface Order {
   order_number: string;
   status: string;
   total_amount: number;
-  payment_status: string;
   created_at: string;
-  order_items: {
-    id: string;
-    quantity: number;
-    size: string;
-    price: number;
-    jerseys: {
-      name: string;
-      team: string;
-      image_url: string;
-    };
-  }[];
+  items: any;
 }
 
 const Profile = () => {
@@ -91,25 +80,7 @@ const Profile = () => {
   const fetchOrders = async (userId: string) => {
     const { data, error } = await supabase
       .from('orders')
-      .select(`
-        id,
-        order_number,
-        status,
-        total_amount,
-        payment_status,
-        created_at,
-        order_items (
-          id,
-          quantity,
-          size,
-          price,
-          jerseys (
-            name,
-            team,
-            image_url
-          )
-        )
-      `)
+      .select('id, order_number, status, total_amount, created_at, items')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
@@ -216,7 +187,7 @@ const Profile = () => {
               </TabsTrigger>
               <TabsTrigger value="orders" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
-                Orders ({orders.length})
+                Inquiries ({orders.length})
               </TabsTrigger>
             </TabsList>
 
@@ -307,9 +278,9 @@ const Profile = () => {
                 <Card>
                   <CardContent className="text-center py-16">
                     <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">No orders yet</h3>
+                    <h3 className="text-xl font-semibold mb-2">No inquiries yet</h3>
                     <p className="text-muted-foreground mb-6">
-                      Start shopping to see your orders here!
+                      Contact us about jerseys to see your inquiries here!
                     </p>
                     <Button onClick={() => navigate('/catalog')}>
                       Browse Jerseys
@@ -323,7 +294,7 @@ const Profile = () => {
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <div>
-                            <CardTitle className="text-lg">Order #{order.order_number}</CardTitle>
+                            <CardTitle className="text-lg">Inquiry #{order.order_number}</CardTitle>
                             <CardDescription>
                               Placed on {new Date(order.created_at).toLocaleDateString('en-US', {
                                 year: 'numeric',
@@ -332,33 +303,23 @@ const Profile = () => {
                               })}
                             </CardDescription>
                           </div>
-                          <div className="flex gap-2">
-                            <Badge variant={getStatusBadgeVariant(order.status)}>
-                              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                            </Badge>
-                            <Badge variant={getPaymentStatusBadge(order.payment_status).variant}>
-                              {getPaymentStatusBadge(order.payment_status).label}
-                            </Badge>
-                          </div>
+                          <Badge variant={getStatusBadgeVariant(order.status)}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </Badge>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          {order.order_items.map((item) => (
-                            <div key={item.id} className="flex gap-4">
-                              <img
-                                src={item.jerseys.image_url || '/placeholder.svg'}
-                                alt={item.jerseys.name}
-                                className="w-16 h-16 object-cover rounded"
-                              />
+                          {Array.isArray(order.items) && order.items.map((item: any, index: number) => (
+                            <div key={index} className="flex gap-4">
                               <div className="flex-1">
-                                <p className="font-medium">{item.jerseys.name}</p>
-                                <p className="text-sm text-muted-foreground">{item.jerseys.team}</p>
+                                <p className="font-medium">{item.name}</p>
+                                <p className="text-sm text-muted-foreground">{item.team || 'Team not specified'}</p>
                                 <p className="text-sm text-muted-foreground">
                                   Size: {item.size} × {item.quantity}
                                 </p>
                               </div>
-                              <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                              <p className="font-semibold">₦{((item.price || 0) * item.quantity).toLocaleString()}</p>
                             </div>
                           ))}
 
@@ -366,7 +327,7 @@ const Profile = () => {
 
                           <div className="flex justify-between text-lg font-semibold">
                             <span>Total</span>
-                            <span>${order.total_amount.toFixed(2)}</span>
+                            <span>₦{order.total_amount.toLocaleString()}</span>
                           </div>
                         </div>
                       </CardContent>

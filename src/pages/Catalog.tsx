@@ -16,7 +16,7 @@ interface Jersey {
   team: string;
   league: string;
   season: string;
-  price: number;
+  price_naira: number;
   image_url: string;
   is_available: boolean;
   is_featured: boolean;
@@ -85,10 +85,10 @@ const Catalog = () => {
 
     switch (sortBy) {
       case "price-low":
-        filtered.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) => a.price_naira - b.price_naira);
         break;
       case "price-high":
-        filtered.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => b.price_naira - a.price_naira);
         break;
       case "name":
         filtered.sort((a, b) => a.name.localeCompare(b.name));

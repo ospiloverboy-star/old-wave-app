@@ -21,7 +21,7 @@ interface CartItem {
     id: string;
     name: string;
     team: string;
-    price: number;
+    price_naira: number;
     image_url: string;
   };
 }
@@ -89,7 +89,7 @@ const Checkout = () => {
             id,
             name,
             team,
-            price,
+            price_naira,
             image_url
           )
         `)
@@ -116,7 +116,7 @@ const Checkout = () => {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.jerseys.price * item.quantity), 0);
+    return cartItems.reduce((sum, item) => sum + (item.jerseys.price_naira * item.quantity), 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,16 +135,28 @@ const Checkout = () => {
         postalCode: formData.postalCode
       };
 
+      const orderNumber = `INQ-${Date.now()}`;
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-          user_id: user.id,
-          order_number: '',
+          customer_name: formData.fullName,
+          customer_phone: formData.phone,
+          customer_email: formData.email,
+          delivery_address: formData.address,
+          delivery_city: formData.city,
+          delivery_state: formData.postalCode,
+          order_number: orderNumber,
           total_amount: calculateTotal(),
-          shipping_address: shippingAddress,
+          items: cartItems.map(item => ({
+            jersey_id: item.jersey_id,
+            name: item.jerseys.name,
+            size: item.size,
+            quantity: item.quantity,
+            price: item.jerseys.price_naira
+          })),
           notes: formData.notes || null,
           status: 'pending',
-          payment_status: 'pending'
+          inquiry_type: 'jersey_inquiry'
         })
         .select()
         .single();
@@ -156,7 +168,7 @@ const Checkout = () => {
         jersey_id: item.jersey_id,
         quantity: item.quantity,
         size: item.size,
-        price: item.jerseys.price
+        price: item.jerseys.price_naira
       }));
 
       const { error: itemsError } = await supabase
@@ -368,7 +380,7 @@ const Checkout = () => {
                           <p className="text-xs text-muted-foreground">{item.jerseys.team}</p>
                           <p className="text-xs text-muted-foreground">Size: {item.size} × {item.quantity}</p>
                           <p className="text-sm font-semibold mt-1">
-                            ${(item.jerseys.price * item.quantity).toFixed(2)}
+                            ₦{(item.jerseys.price_naira * item.quantity).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -380,7 +392,7 @@ const Checkout = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span className="font-medium">${calculateTotal().toFixed(2)}</span>
+                      <span className="font-medium">₦{calculateTotal().toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
@@ -389,7 +401,7 @@ const Checkout = () => {
                     <Separator />
                     <div className="flex justify-between text-lg font-semibold">
                       <span>Total</span>
-                      <span>${calculateTotal().toFixed(2)}</span>
+                      <span>₦{calculateTotal().toLocaleString()}</span>
                     </div>
                   </div>
                 </CardContent>

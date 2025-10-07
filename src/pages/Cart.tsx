@@ -20,7 +20,7 @@ interface CartItem {
     name: string;
     team: string;
     league: string;
-    price: number;
+    price_naira: number;
     image_url: string;
     is_available: boolean;
   };
@@ -63,7 +63,7 @@ const Cart = () => {
             name,
             team,
             league,
-            price,
+            price_naira,
             image_url,
             is_available
           )
@@ -146,7 +146,7 @@ const Cart = () => {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.jerseys.price * item.quantity), 0);
+    return cartItems.reduce((sum, item) => sum + (item.jerseys.price_naira * item.quantity), 0);
   };
 
   const calculateTotal = () => {
@@ -294,7 +294,7 @@ const Cart = () => {
                           </Button>
                         </div>
                         <p className="font-semibold text-lg">
-                          ${(item.jerseys.price * item.quantity).toFixed(2)}
+                          ₦{(item.jerseys.price_naira * item.quantity).toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -312,7 +312,7 @@ const Cart = () => {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">${calculateSubtotal().toFixed(2)}</span>
+                    <span className="font-medium">₦{calculateSubtotal().toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
@@ -321,7 +321,7 @@ const Cart = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
+                    <span>₦{calculateTotal().toLocaleString()}</span>
                   </div>
                 </div>
 

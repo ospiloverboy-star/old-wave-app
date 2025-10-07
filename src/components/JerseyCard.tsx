@@ -9,7 +9,7 @@ interface JerseyCardProps {
   team: string;
   league: string;
   season: string;
-  price: number;
+  price_naira: number;
   image_url: string;
   is_available: boolean;
   is_featured?: boolean;
@@ -21,7 +21,7 @@ const JerseyCard = ({
   team,
   league,
   season,
-  price,
+  price_naira,
   image_url,
   is_available,
   is_featured = false
@@ -86,7 +86,7 @@ const JerseyCard = ({
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-border/50">
-              <div className="text-price">${price.toFixed(2)}</div>
+              <div className="text-price">₦{price_naira.toLocaleString()}</div>
               <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span>Shop Now</span>
                 <svg
